@@ -10,6 +10,8 @@ export const NETWORK_STATUS = {
 export const GET_GOALS = 'GET_GOALS';
 export const ADD_GOAL = 'ADD_GOAL';
 export const UPDATE_MONEY = 'UPDATE_MONEY';
+export const COMPLETE_GOAL = 'COMPLETE_GOAL';
+export const UPDATE_COUNTDOWN = 'UPDATE_COUNTDOWN';
 
 export const SIGNUP = 'SIGNUP'
 export const LOGIN = 'LOGIN'

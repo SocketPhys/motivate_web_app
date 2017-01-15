@@ -3,7 +3,9 @@ import {
   BASE_SERVER_URL,
   GET_GOALS,
   ADD_GOAL,
-  UPDATE_MONEY
+  COMPLETE_GOAL,
+  UPDATE_MONEY,
+  UPDATE_COUNTDOWN
 } from '../constants'
 export function getGoals() {
   return function(dispatch, getState) {
@@ -14,6 +16,7 @@ export function getGoals() {
       .then((json)=>{
         console.log(json);
         dispatch(receiveGoals(json));
+        dispatch(updateCountdowns());
       });
   }
 }
@@ -40,19 +43,32 @@ export function addGoal(goal) {
   }
 }
 
-export function updateMoneyOnLine() {
+export function completeGoal(goalId) {
   return function(dispatch, getState) {
-    var { goals } = getState();
-    var result = 0;
-    goals.goals.forEach(function(goal) {
-      if(!goal.finished && goal.deadline < Date.now()) {
-        result += parseFloat(goal.money);
-      }
-    });
-    dispatch({type: UPDATE_MONEY, money: result})
+    dispatch(requestCompleteGoal());
+    const user = getState().user;
+    fetch(`${BASE_SERVER_URL}/complete_goal`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: user.username,
+        password: user.password,
+        goalId
+      })
+    })
+      .then(()=>{
+        dispatch(receiveCompleteGoal());
+        dispatch(getGoals());
+      })
   }
 }
-
+export function updateCountdowns() {
+  return {
+    type: UPDATE_COUNTDOWN
+  }
+}
 const receiveGoals = (goals) => {
   return {
     type: GET_GOALS,
@@ -78,6 +94,20 @@ const requestAddGoal = () => {
 const receiveAddGoal = () => {
   return {
     type: ADD_GOAL,
+    status: 'received'
+  }
+}
+
+const requestCompleteGoal = () => {
+  return {
+    type: COMPLETE_GOAL,
+    status: 'requested'
+  }
+}
+
+const receiveCompleteGoal = () => {
+  return {
+    type: COMPLETE_GOAL,
     status: 'received'
   }
 }
