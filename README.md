@@ -1,1 +1,1 @@
-#Won First Place at SMHacks(hackathon)
+Won First Place at SMHacks(hackathon)
